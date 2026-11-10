@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1f3d6b">
+<title>منصة التعلّم</title>
+<style>
+  :root{
+    --bg:#f4f6fa; --card:#fff; --ink:#16202e; --muted:#6b7686; --line:#e3e8f0;
+    --navy:#1f3d6b; --navy2:#2c5395; --soft:#e4e9f2; --ok:#16a34a; --bad:#dc2626; --accent:#f59e0b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f1520; --card:#18212f; --ink:#e8edf5; --muted:#9aa7ba; --line:#263246; --soft:#202c40; }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic","Noto Sans Arabic",system-ui,sans-serif;line-height:1.8}
+  #shell{max-width:520px;margin:0 auto;min-height:100vh;position:relative}
+  button{font:inherit;color:inherit;cursor:pointer}
+
+  /* ---------- الشاشة الرئيسية ---------- */
+  .home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:30px 22px;text-align:center;position:relative;overflow:hidden}
+  .home::before,.home::after{content:"";position:absolute;border-radius:50%;background:var(--soft);z-index:0}
+  .home::before{width:260px;height:260px;top:-110px;left:-90px}
+  .home::after{width:300px;height:300px;bottom:-140px;right:-100px}
+  .home > *{position:relative;z-index:1}
+  .logo{width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy2));
+    display:grid;place-items:center;box-shadow:0 8px 24px rgba(31,61,107,.3);margin-bottom:14px}
+  .logo svg{width:46px;height:46px;fill:#fff}
+  .home h1{margin:6px 0 2px;font-size:1.7rem}
+  .home .sub{color:var(--muted);margin:0 0 26px;line-height:1.6}
+  .menu{width:100%;display:flex;flex-direction:column;gap:12px}
+  .mbtn{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:18px;padding:16px 20px;
+    background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;font-size:1.1rem;font-weight:700;
+    box-shadow:0 8px 18px rgba(31,61,107,.22);text-align:right}
+  .mbtn svg{width:26px;height:26px;fill:#fff;flex:none}
+  .foot{color:var(--muted);margin-top:24px;font-size:.92rem}
+
+  /* ---------- الشريط العلوي ---------- */
+  .bar{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;display:flex;align-items:center;gap:12px;padding:14px 16px}
+  .bar button{background:none;border:0;color:#fff;font-size:1.5rem;line-height:1;padding:0 4px}
+  .bar h2{margin:0;font-size:1.1rem;flex:1;text-align:center;padding-inline-end:28px}
+
+  .page{padding:16px}
+  .row{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:18px 16px;margin-bottom:12px;text-align:right;
+    box-shadow:0 2px 8px rgba(20,30,50,.05)}
+  .row svg.ic{width:26px;height:26px;fill:var(--navy);flex:none}
+  .row .t{flex:1;font-weight:700}
+  .row .chev{color:var(--muted)}
+  .row small{color:var(--muted);font-weight:400;display:block}
+  .soon{opacity:.55}
+
+  /* مادة تنفتح */
+  details.subj{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:12px;
+    box-shadow:0 2px 8px rgba(20,30,50,.05);overflow:hidden}
+  details.subj summary{list-style:none;display:flex;align-items:center;gap:12px;padding:18px 16px;cursor:pointer;font-weight:700}
+  details.subj summary::-webkit-details-marker{display:none}
+  details.subj summary svg{width:26px;height:26px;fill:var(--navy);flex:none}
+  details.subj summary .t{flex:1}
+  details.subj summary .arrow{transition:transform .2s;color:var(--muted)}
+  details.subj[open] summary .arrow{transform:rotate(180deg)}
+  .terms{display:flex;gap:10px;padding:4px 14px 16px}
+  .term{flex:1;border:0;border-radius:14px;padding:14px 8px;background:var(--navy);color:#fff;font-weight:700}
+  .term.off{background:var(--soft);color:var(--muted)}
+
+  /* درس */
+  .tag{font-size:.82rem;color:var(--navy2);font-weight:700}
+  .lesson{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .lesson h3{margin:4px 0}
+  .video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;margin:14px 0;background:#000}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  h4{margin:18px 0 6px;color:var(--navy2)}
+  ul{margin:0;padding-inline-start:20px}
+  .pill{display:inline-block;margin:12px 8px 0 0;border-radius:12px;padding:10px 16px;font-weight:700;border:0;color:#fff;background:var(--navy)}
+  .pill.alt{background:var(--accent);color:#1b1300}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px}
+
+  /* لعبة الأسئلة */
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .qn{color:var(--muted);font-size:.9rem}
+  .qt{font-size:1.15rem;font-weight:700;margin:6px 0 14px}
+  .opt{display:block;width:100%;text-align:right;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .opt.good{border-color:var(--ok);background:rgba(22,163,74,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(220,38,38,.12)}
+  .score{text-align:center;font-size:1.3rem;font-weight:700;padding:20px 0}
+
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;
+    padding:10px 18px;border-radius:999px;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s}
+  #toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="shell"><div id="view"></div></div>
+<div id="toast"></div>
+
+<script src="lessons.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const view = $("#view");
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const gradeOf = id => GRADES.find(g => g.id === id) || {name: ""};
+const subjOf = id => SUBJECTS.find(s => s.id === id) || {name: ""};
+const termName = t => t == 2 ? "الفصل الثاني" : "الفصل الأول";
+
+const ICON = {
+  cap:  '<svg viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.9V17h2V9L12 3zm-6 9.2v4L12 19l6-2.8v-4L12 15.5 6 12.2z"/></svg>',
+  game: '<svg viewBox="0 0 24 24"><path d="M21 6H3a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm4.5 2a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>',
+  share:'<svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 0 0-2.4 1.2L8.9 13.6a3 3 0 0 0 0-3.2l6.7-3.6A3 3 0 1 0 15 5a3 3 0 0 0 .1.8L8.4 9.4a3 3 0 1 0 0 5.2l6.7 3.6A3 3 0 1 0 18 16z"/></svg>',
+  star: '<svg viewBox="0 0 24 24"><path d="m12 2 3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.1 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-6 4V6a2 2 0 0 1 2-2z"/></svg>',
+  book: '<svg class="ic" viewBox="0 0 24 24"><path d="M21 5c-1.1-.4-2.3-.5-3.5-.5-1.9 0-4.1.4-5.5 1.5-1.4-1.1-3.6-1.5-5.5-1.5S2.9 4.9 1 5.7v14.7c0 .3.3.6.6.6.1 0 .2 0 .3-.1 1.4-.7 3.3-1.1 4.6-1.1 1.9 0 4.1.4 5.5 1.5 1.3-.8 3.8-1.5 5.5-1.5 1.6 0 3.4.4 4.7 1.1.1.1.2.1.3.1.3 0 .6-.3.6-.6V5.7c-.6-.3-1.1-.5-2.1-.7zm0 13.5c-1.1-.3-2.2-.5-3.5-.5-1.7 0-4.1.7-5.5 1.5V7.5c1.4-.9 3.8-1.5 5.5-1.5 1.1 0 2.2.2 3.5.6v11.9z"/></svg>',
+};
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); }
+
+function barHtml(title){
+  return `<div class="bar"><button onclick="history.length>1?history.back():(location.hash='')" aria-label="رجوع">→</button><h2>${esc(title)}</h2></div>`;
+}
+
+/* ---------- الشاشة الرئيسية ---------- */
+function home(){
+  document.title = SITE.name;
+  const hasGames = LESSONS.some(l => l.quiz && l.quiz.length);
+  view.innerHTML = `
+  <div class="home">
+    <div class="logo">${ICON.cap}</div>
+    <h1>${esc(SITE.name)}</h1>
+    <p class="sub">${esc(SITE.country)}<br>${esc(SITE.tagline)}</p>
+    <div class="menu">
+      <button class="mbtn" onclick="location.hash='#/grades'">${ICON.cap}<span>الدروس</span></button>
+      ${hasGames ? `<button class="mbtn" onclick="location.hash='#/games'">${ICON.game}<span>ألعاب الذكاء والتعليم</span></button>` : ""}
+      <button class="mbtn" id="shareBtn">${ICON.share}<span>مشاركة</span></button>
+      ${SITE.rateLink ? `<a class="mbtn" href="${esc(SITE.rateLink)}" target="_blank" rel="noopener">${ICON.star}<span>قيّم التطبيق</span></a>` : ""}
+      ${SITE.contactLink ? `<a class="mbtn" href="${esc(SITE.contactLink)}" target="_blank" rel="noopener">${ICON.chat}<span>${esc(SITE.contactText)}</span></a>` : ""}
+    </div>
+    <p class="foot">${esc(SITE.footerText)}</p>
+  </div>`;
+  $("#shareBtn").onclick = share;
+}
+
+async function share(){
+  const url = SITE.shareUrl || (location.origin + location.pathname);
+  try {
+    if (navigator.share) { await navigator.share({ title: SITE.name, text: SITE.shareText, url }); return; }
+    await navigator.clipboard.writeText(url); toast("تم نسخ الرابط");
+  } catch (e) { toast(url); }
+}
+
+/* ---------- الصفوف ---------- */
+function grades(){
+  view.innerHTML = barHtml("الصفوف الدراسية") + `<div class="page">` +
+    GRADES.map(g => {
+      const n = LESSONS.filter(l => l.grade === g.id).length;
+      return n
+        ? `<button class="row" onclick="location.hash='#/grade/${g.id}'">${ICON.book}<span class="t">${esc(g.name)}<small>${n} درس</small></span><span class="chev">‹</span></button>`
+        : `<div class="row soon">${ICON.book}<span class="t">${esc(g.name)}<small>قريبًا</small></span></div>`;
+    }).join("") + `</div>`;
+}
+
+/* ---------- مواد الصف (تنفتح وتظهر الفصول) ---------- */
+function grade(gid){
+  const items = LESSONS.filter(l => l.grade === gid);
+  const subs = SUBJECTS.filter(s => items.some(l => l.subject === s.id));
+  view.innerHTML = barHtml(gradeOf(gid).name) + `<div class="page">` +
+    (subs.length ? subs.map(s => {
+      const has = t => items.some(l => l.subject === s.id && l.term == t);
+      const termBtn = t => has(t)
+        ? `<button class="term" onclick="location.hash='#/list/${gid}/${s.id}/${t}'">${termName(t)}</button>`
+        : `<button class="term off" disabled>${termName(t)}</button>`;
+      return `<details class="subj"><summary>${ICON.book}<span class="t">${esc(s.name)}</span><span class="arrow">⌄</span></summary>
+        <div class="terms">${termBtn(1)}${termBtn(2)}</div></details>`;
+    }).join("") : `<div class="empty">لا توجد دروس لهذا الصف بعد.</div>`) + `</div>`;
+}
+
+/* ---------- قائمة الدروس ---------- */
+function list(gid, sid, term){
+  const items = LESSONS.filter(l => l.grade === gid && l.subject === sid && l.term == term);
+  view.innerHTML = barHtml(subjOf(sid).name + " — " + termName(term)) + `<div class="page">` +
+    (items.length ? items.map(l =>
+      `<button class="row" onclick="location.hash='#/lesson/${esc(l.id)}'">${ICON.book}<span class="t">${esc(l.title)}<small>${esc(l.summary || "")}</small></span><span class="chev">‹</span></button>`
+    ).join("") : `<div class="empty">لا توجد دروس بعد.</div>`) + `</div>`;
+}
+
+/* ---------- صفحة الدرس ---------- */
+function lesson(id){
+  const l = LESSONS.find(x => x.id === id);
+  if (!l) { location.hash = ""; return; }
+  const ul = a => a && a.length ? "<ul>" + a.map(i => `<li>${esc(i)}</li>`).join("") + "</ul>" : "";
+  view.innerHTML = barHtml(l.title) + `<div class="page"><article class="lesson">
+    <span class="tag">${esc(gradeOf(l.grade).name)} • ${esc(subjOf(l.subject).name)} • ${termName(l.term)}</span>
+    <h3>${esc(l.title)}</h3>
+    <p style="color:var(--muted);margin:0">${esc(l.summary || "")}</p>
+    ${l.video ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(l.video)}" allowfullscreen loading="lazy" title="${esc(l.title)}"></iframe></div>` : ""}
+    ${l.notes && l.notes.length ? `<h4>ملخص الدرس</h4>${ul(l.notes)}` : ""}
+    ${l.exercises && l.exercises.length ? `<h4>تمارين</h4>${ul(l.exercises)}` : ""}
+    ${l.pdf ? `<a class="pill alt" href="${esc(l.pdf)}" target="_blank" rel="noopener">📄 ملف التحضير</a>` : ""}
+    ${l.quiz && l.quiz.length ? `<button class="pill" onclick="location.hash='#/quiz/${esc(l.id)}'">🎮 اختبر نفسك</button>` : ""}
+  </article></div>`;
+  window.scrollTo(0, 0);
+}
+
+/* ---------- الألعاب ---------- */
+function games(){
+  const items = LESSONS.filter(l => l.quiz && l.quiz.length);
+  view.innerHTML = barHtml("ألعاب الذكاء والتعليم") + `<div class="page">` +
+    (items.length ? items.map(l =>
+      `<button class="row" onclick="location.hash='#/quiz/${esc(l.id)}'">${ICON.game.replace('<svg','<svg class="ic"')}<span class="t">${esc(l.title)}<small>${esc(gradeOf(l.grade).name)} • ${esc(subjOf(l.subject).name)} • ${l.quiz.length} سؤال</small></span><span class="chev">‹</span></button>`
+    ).join("") : `<div class="empty">لا توجد ألعاب بعد.</div>`) + `</div>`;
+}
+
+function quiz(id){
+  const l = LESSONS.find(x => x.id === id);
+  if (!l || !l.quiz || !l.quiz.length) { location.hash = "#/games"; return; }
+  let i = 0, score = 0;
+  const box = () => $("#qbox");
+  view.innerHTML = barHtml("اختبر نفسك") + `<div class="page"><div id="qbox"></div></div>`;
+  function show(){
+    if (i >= l.quiz.length) {
+      box().innerHTML = `<div class="qcard"><div class="score">نتيجتك: ${score} من ${l.quiz.length} ${score === l.quiz.length ? "🎉" : "👏"}</div>
+        <button class="pill" id="again">إعادة المحاولة</button>
+        <button class="pill alt" onclick="location.hash='#/lesson/${esc(l.id)}'">العودة للدرس</button></div>`;
+      $("#again").onclick = () => { i = 0; score = 0; show(); };
+      return;
+    }
+    const q = l.quiz[i];
+    box().innerHTML = `<div class="qcard"><div class="qn">السؤال ${i + 1} من ${l.quiz.length}</div>
+      <div class="qt">${esc(q.q)}</div>
+      ${q.options.map((o, k) => `<button class="opt" data-k="${k}">${esc(o)}</button>`).join("")}</div>`;
+    box().querySelectorAll(".opt").forEach(b => b.onclick = () => {
+      const k = +b.dataset.k;
+      box().querySelectorAll(".opt").forEach(x => x.disabled = true);
+      box().querySelector(`.opt[data-k="${q.answer}"]`).classList.add("good");
+      if (k === q.answer) score++; else b.classList.add("wrong");
+      setTimeout(() => { i++; show(); window.scrollTo(0, 0); }, 1100);
+    });
+  }
+  show();
+}
+
+/* ---------- التوجيه ---------- */
+function route(){
+  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  const [p, a, b, c] = parts;
+  window.scrollTo(0, 0);
+  if (p === "grades") grades();
+  else if (p === "grade" && a) grade(a);
+  else if (p === "list" && a && b && c) list(a, b, c);
+  else if (p === "lesson" && a) lesson(a);
+  else if (p === "games") games();
+  else if (p === "quiz" && a) quiz(a);
+  else home();
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
