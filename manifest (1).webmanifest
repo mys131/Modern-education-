@@ -1,0 +1,17 @@
+{
+  "name": "المنصة الحديثة",
+  "short_name": "المنصة الحديثة",
+  "description": "دروس وأنشطة تمايز واختبارات بشكل سهل وممتع",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7ff",
+  "theme_color": "#2457d6",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
