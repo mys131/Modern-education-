@@ -1,0 +1,514 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>حل المعادلتين الآنيتين</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+/* Layout: header band, 16:10 stage with subtitle strip below, segmented progress bar, controls. Quiz scenes add a timer ring and three answer buttons. */
+:root{
+  --bg:#f4f7ff; --surface:#ffffff; --stage:#f8faff; --ink:#14213d; --muted:#4a5878;
+  --edge:#d5def5; --line:#a9b9e3; --dot:#e1e8fb; --chip:#e8eefc;
+  --band:#2457d6; --band-ink:#ffffff; --plum:#2457d6; --plum-ink:#ffffff;
+  --green:#7be0a8; --green-edge:#1e7a4f; --on-green:#0b3a22;
+  --red:#d8404c; --gold:#ffb02e; --gold-edge:#c47f00; --on-gold:#3b2600;
+  --ok:#1e7a4f; --bad:#c02f3a;
+  --f-display:'Cairo','Tajawal',system-ui,sans-serif;
+  --f-body:'Tajawal',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1430; --surface:#18204a; --stage:#131a3c; --ink:#eef1ff; --muted:#aab4de;
+    --edge:#2b3668; --line:#4a5497; --dot:#1d2756; --chip:#222c5e;
+    --band:#1b2f7a; --band-ink:#ffffff; --plum:#9db6ff; --plum-ink:#0e1430;
+    --green:#7be0a8; --green-edge:#7be0a8; --on-green:#0b3a22;
+    --red:#ff7d8a; --gold:#ffb02e; --gold-edge:#ffd079; --on-gold:#3b2600;
+    --ok:#7be0a8; --bad:#ff9aa5; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1430; --surface:#18204a; --stage:#131a3c; --ink:#eef1ff; --muted:#aab4de;
+    --edge:#2b3668; --line:#4a5497; --dot:#1d2756; --chip:#222c5e;
+    --band:#1b2f7a; --band-ink:#ffffff; --plum:#9db6ff; --plum-ink:#0e1430;
+    --green:#7be0a8; --green-edge:#7be0a8; --on-green:#0b3a22;
+    --red:#ff7d8a; --gold:#ffb02e; --gold-edge:#ffd079; --on-gold:#3b2600;
+    --ok:#7be0a8; --bad:#ff9aa5; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6; direction:rtl;
+  padding-block:0;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+.wrap{max-width:980px; margin:0 auto; padding-block:16px 28px; display:grid; gap:14px}
+.start[hidden],.scene[hidden]{display:none}
+sup{font-size:.62em; line-height:0; vertical-align:super; margin-inline-start:.06em}
+
+.top{background:var(--band); color:var(--band-ink); border-radius:14px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px 16px; flex-wrap:wrap}
+.top .eyebrow{font-size:.85rem; opacity:.85}
+.top h1{margin:0; font-family:var(--f-display); font-weight:900; font-size:2rem; line-height:1.2}
+.top .meta{font-size:.9rem; opacity:.9}
+
+.stage{
+  position:relative; overflow:hidden; border:1px solid var(--edge); border-radius:14px;
+  background-color:var(--stage);
+  background-image:radial-gradient(var(--dot) 1px, transparent 1.3px); background-size:1.6em 1.6em;
+  aspect-ratio:16/10; font-size:clamp(14px, 1.2vw + 10px, 22px);
+}
+@media (max-width:640px){ .stage{aspect-ratio:auto; height:max(580px, 84vh)} }
+
+.scene{position:absolute; inset:0; display:grid; grid-template-rows:auto 1fr; padding:.8em 1.1em; text-align:center}
+.body{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.7em; min-height:0}
+.sh{display:flex; align-items:center; gap:.6em; justify-self:start}
+.sh .n{display:grid; place-items:center; width:1.9em; height:1.9em; border-radius:50%; background:var(--plum); color:var(--plum-ink); font-family:var(--f-display)}
+.sh h2{margin:0; font-family:var(--f-display); font-weight:900; font-size:1.35em}
+
+[data-t]{opacity:0; transform:translateY(.4em); transition:opacity .45s ease, transform .45s ease; pointer-events:none}
+[data-t].on{opacity:1; transform:none; pointer-events:auto}
+
+.sent{max-width:30em; color:var(--muted)}
+.eq{font-family:var(--f-display); font-size:1.4em; direction:rtl; unicode-bidi:isolate; white-space:nowrap}
+.line{display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.2em .8em}
+.line .eq{font-size:1.5em}
+.line.final .eq{background:var(--green); color:var(--on-green); border:2px solid var(--green-edge); border-radius:.6em; padding:.02em .7em}
+.solve{display:grid; gap:.3em; justify-items:center}
+.note{font-size:.85em; color:var(--muted)}
+.op{color:var(--red)}
+.callout{background:var(--chip); border:1px solid var(--edge); border-radius:12px; padding:.5em 1em; max-width:31em}
+.callout.rule{background:var(--gold); color:var(--on-gold); border-color:var(--gold-edge); font-weight:700}
+.callout .eq{font-size:1.15em}
+.frac{display:inline-grid; text-align:center; vertical-align:middle; line-height:1.15; margin-inline:.2em}
+.frac>span:first-child{border-bottom:2px solid currentColor; padding-inline:.3em}
+.tick{width:1.5em; height:1.5em; color:var(--ok); vertical-align:middle}
+.chipx{display:inline-block; font-weight:700; background:var(--plum); color:var(--plum-ink); border-radius:999px; padding:0 .8em; margin-inline:.2em}
+.ask{font-family:var(--f-display); font-size:1.6em; color:var(--red)}
+
+.ch{font-size:1.3em;min-width:4.6em}
+.chs{max-width:15em}
+.reveal{min-height:6em}
+.qt{font-size:1.15em;line-height:1.6;padding:.1em .8em}
+.gwrap{display:grid;place-items:center}
+.gr{direction:ltr;width:13em;height:13em;display:block;background:var(--surface);border:1px solid var(--edge);border-radius:10px}
+.qrow .gr{width:11em;height:11em}
+.gr [data-t]{transform:none}
+.gl{stroke:var(--dot);stroke-width:1}.gl.ax{stroke:var(--line);stroke-width:1.6}
+.gt{font-size:8px;fill:var(--muted);font-family:var(--f-body)}.gt.ab{font-size:11px;font-weight:700;fill:var(--plum)}
+.mir{stroke:var(--red);stroke-width:2.4;stroke-dasharray:6 4}
+.dist{stroke:var(--gold-edge);stroke-width:2;stroke-dasharray:3 3}
+.dl{font-size:13px;font-weight:700;fill:var(--gold-edge);font-family:var(--f-body)}
+.gp circle{fill:var(--plum)}.gp text{fill:var(--plum);font-size:13px;font-weight:700;font-family:var(--f-body)}
+.gi circle{fill:var(--green-edge)}.gi text{fill:var(--ok);font-size:13px;font-weight:700;font-family:var(--f-body)}
+.shp{fill:rgba(106,70,150,.25);stroke:var(--plum);stroke-width:2}.shp.img{fill:rgba(165,207,69,.4);stroke:var(--green-edge)}
+/* power tables */
+.tabs{display:flex; gap:1.2em; justify-content:center; flex-wrap:wrap}
+.col{display:grid; gap:.3em; align-content:start; justify-items:stretch; min-width:9em}
+.col .hd{font-weight:700; color:var(--plum)}
+.pw{background:var(--surface); border:1px solid var(--edge); border-radius:10px; padding:.1em .8em}
+.pw .eq{font-size:1.15em}
+
+/* quiz */
+.qeq{font-family:var(--f-display); font-size:2em; direction:rtl; background:var(--surface); border:1px solid var(--edge); padding:0 .7em; border-radius:.5em; line-height:1.4}
+.qrow{display:flex; align-items:center; justify-content:center; gap:1.4em; flex-wrap:wrap}
+.rcol{display:grid; gap:.4em; justify-items:center}
+.timer{position:relative; width:5.4em; aspect-ratio:1; transition:opacity .3s}
+.timer.idle{opacity:.45}
+.timer svg{width:100%; height:100%; display:block}
+.trk{fill:none; stroke:var(--chip); stroke-width:9}
+.arc{fill:none; stroke:var(--green-edge); stroke-width:9; stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset .2s linear}
+.timer.hot .arc{stroke:var(--red)}
+.timer.hot .num{color:var(--red)}
+.num{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--f-display); font-weight:900; font-size:2.4em}
+.btn{font-weight:700; font-size:.85em; padding:.3em 1em; border-radius:999px; border:2px solid var(--plum); background:transparent; color:var(--plum); cursor:pointer}
+.btn:hover{background:var(--plum); color:var(--plum-ink)}
+.chs{display:flex; gap:.7em; justify-content:center; flex-wrap:wrap}
+.ch{min-width:3.4em; padding:.15em 1em; font-family:var(--f-display); font-size:1.7em; line-height:1.4; border-radius:.55em; border:2px solid var(--plum); background:var(--surface); color:var(--ink); cursor:pointer}
+.ch:hover:not([disabled]){background:var(--chip)}
+.ch.sel{background:var(--plum); color:var(--plum-ink)}
+.ch[disabled]{cursor:default}
+.ch.right{background:var(--green); border-color:var(--green-edge); color:var(--on-green)}
+.ch.wrong{background:var(--red); border-color:var(--red); color:#fff}
+.reveal{display:grid; gap:.2em; justify-items:center; min-height:7em; align-content:start}
+.rrow{display:flex; align-items:center; gap:.8em; flex-wrap:wrap; justify-content:center}
+.ans{font-family:var(--f-display); font-size:1.5em; background:var(--gold); color:var(--on-gold); border:2px solid var(--gold-edge); border-radius:.7em; padding:0 .8em; direction:rtl}
+.fb{font-weight:700}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)} .fb.none{color:var(--muted)}
+.reveal .line .eq{font-size:1.2em}
+
+
+/* level chooser */
+.lvls{display:flex; gap:.8em; justify-content:center; flex-wrap:wrap}
+.lvl{display:grid; gap:0; justify-items:center; min-width:7em; padding:.35em 1.2em .45em; border-radius:.8em; border:2px solid var(--plum); background:var(--surface); color:var(--ink); text-decoration:none; font-family:var(--f-display); font-size:1.5em; line-height:1.3}
+.lvl .st{color:var(--gold-edge); font-size:.65em; letter-spacing:.1em}
+.lvl:hover,.lvl:focus-visible{background:var(--chip)}
+
+/* credits */
+.score{font-family:var(--f-display); font-size:2em; color:var(--plum)}
+.credit{display:grid; gap:.5em; width:min(100%, 26em); padding:.8em 1.2em; border-radius:16px; background:var(--band); color:var(--band-ink)}
+.who{display:grid; gap:0; line-height:1.3}
+.who .lab{font-size:.85em; opacity:.85}
+.who b{font-family:var(--f-display); font-weight:900; font-size:1.7em}
+.who+.who{border-top:1px solid rgba(255,255,255,.28); padding-top:.5em}
+
+/* start overlay */
+.start{position:absolute; inset:0; z-index:5; display:grid; place-content:center; justify-items:center; gap:.9em; padding:1em; text-align:center; background:var(--stage)}
+.start h2{margin:0; font-family:var(--f-display); font-weight:900; font-size:1.7em}
+.start p{margin:0; color:var(--muted); max-width:26em}
+.start .eq{font-size:2.4em; color:var(--plum)}
+.bigplay{display:flex; align-items:center; gap:.6em; font-size:1.05em; font-weight:700; padding:.5em 1.4em .5em 1.1em; border-radius:999px; border:0; background:var(--plum); color:var(--plum-ink); cursor:pointer}
+.bigplay svg{width:1.4em; height:1.4em; fill:currentColor}
+
+.caption{min-height:4.6em; display:grid; place-items:center; text-align:center; padding:.6em 1em; background:var(--surface); border:1px solid var(--edge); border-radius:12px; font-size:clamp(17px, 1.2vw + 12px, 24px); font-weight:500; text-wrap:balance}
+.meta2{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:.9rem; color:var(--muted)}
+.meta2 .t{font-variant-numeric:tabular-nums}
+.bar{display:flex; gap:3px}
+.seg{flex:var(--d) 1 0; height:14px; padding:0; border:0; border-radius:5px; background:var(--chip); position:relative; overflow:hidden; cursor:pointer}
+.seg .fill{position:absolute; inset:0; background:var(--plum); transform-origin:right center; transform:scaleX(0)}
+.seg.q .fill{background:var(--gold)}
+.ctl{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.ib{display:grid; place-items:center; width:44px; height:44px; border-radius:50%; border:1px solid var(--edge); background:var(--surface); color:var(--ink); cursor:pointer}
+.ib svg{width:22px; height:22px; fill:currentColor}
+.ib.flip svg{transform:scaleX(-1)}
+.ib.main{width:54px; height:54px; background:var(--plum); color:var(--plum-ink); border-color:var(--plum)}
+.sp{flex:1}
+.snd{display:flex; align-items:center; gap:8px; height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--edge); background:var(--surface); color:var(--ink); cursor:pointer; font-weight:700}
+.snd[aria-pressed="false"]{color:var(--muted)}
+.note2{font-size:.85rem; color:var(--muted); margin:0}
+
+@media (prefers-reduced-motion: reduce){
+  [data-t]{transition:none; transform:none}
+  .arc{transition:none}
+}
+.l1{stroke:var(--plum);stroke-width:2.6}.l2{stroke:var(--red);stroke-width:2.6}
+.eq,.ask,.qeq,.num,.ch,.ans,.lvl,.score,.top h1,.sh .n{font-weight:900}
+</style>
+
+<main class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">الصف التاسع · الجبر · المعادلات الآنية</div>
+      <h1>حل المعادلتين الآنيتين</h1>
+    </div>
+    <div class="meta">شرح متحرك، ثم تختار مستوى الأنشطة: سهل أو متوسط أو صعب</div>
+  </header>
+
+  <section aria-label="مشغّل الدرس">
+    <div class="stage" id="stage">
+      <div class="start" id="start">
+        <div class="eq" aria-hidden="true">س = ٣ ، ص = ٢</div>
+        <h2>كيف نجد س وص معاً؟</h2>
+        <p>شرح قصير بثلاث طرق، وفي نهايته تختار مستوى الأنشطة الذي يناسبك.</p>
+        <button class="bigplay" id="bigplay" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          ابدأ الدرس
+        </button>
+      </div>
+    </div>
+
+    <div class="caption" id="caption" aria-live="polite" style="margin-top:12px"></div>
+
+    <div style="display:grid; gap:10px; margin-top:12px">
+      <div class="meta2">
+        <span id="chap"></span>
+        <span class="t" id="time" dir="ltr"></span>
+      </div>
+      <div class="bar" id="bar"></div>
+      <div class="ctl">
+        <button class="ib flip" id="prev" type="button" aria-label="المشهد السابق"><svg viewBox="0 0 24 24"><path d="M18 5l-9 7 9 7z"/><path d="M5 5h2v14H5z"/></svg></button>
+        <button class="ib main" id="play" type="button" aria-label="تشغيل"></button>
+        <button class="ib flip" id="next" type="button" aria-label="المشهد التالي"><svg viewBox="0 0 24 24"><path d="M6 5l9 7-9 7z"/><path d="M17 5h2v14h-2z"/></svg></button>
+        <span class="sp"></span>
+        <button class="snd" id="snd" type="button" aria-pressed="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+          <span id="sndlab">الصوت: يعمل</span>
+        </button>
+      </div>
+      <p class="note2" id="sndnote" hidden>لا يتوفر صوت عربي للقراءة على هذا الجهاز، لذلك اقرأ الشرح المكتوب. صوت المؤقّت يعمل.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var AR='٠١٢٣٤٥٦٧٨٩';
+  function ar(n){ return String(n).replace(/\d/g,function(d){return AR[+d];}); }
+  function p(b,e){ return b+'<sup>'+e+'</sup>'; }
+  function neg(x){ return '<bdi dir="rtl">−'+x+'</bdi>'; }
+  function frac(a,b){ return '<span class="frac"><span>'+a+'</span><span>'+b+'</span></span>'; }
+  function eq(x){ return '<span class="eq">'+x+'</span>'; }
+  function kf(t,k){ return k[0][1]; }
+
+  var answers=[];
+  var S=[];
+
+  /* ---------- helpers ---------- */
+  function n(v){ return v<0?'\u2067−'+ar(Math.abs(v))+'\u2069':ar(Math.abs(v)); }
+  function L(s){ return '<bdi dir="ltr">'+s+'</bdi>'; }
+  var U=20,O=130;
+  function X(x){ return O+U*x; } function Y(y){ return O-U*y; }
+  function grid(inner){
+    var s='<svg class="gr" viewBox="0 0 260 260" aria-hidden="true">';
+    for(var i=-6;i<=6;i++){
+      s+='<line class="gl'+(i===0?' ax':'')+'" x1="'+X(i)+'" y1="'+Y(-6)+'" x2="'+X(i)+'" y2="'+Y(6)+'"/>';
+      s+='<line class="gl'+(i===0?' ax':'')+'" x1="'+X(-6)+'" y1="'+Y(i)+'" x2="'+X(6)+'" y2="'+Y(i)+'"/>';
+      if(i!==0){ s+='<text class="gt" x="'+X(i)+'" y="'+(O+10)+'" text-anchor="middle">'+n(i)+'</text><text class="gt" x="'+(O-4)+'" y="'+(Y(i)+3)+'" text-anchor="end">'+n(i)+'</text>'; }
+    }
+    s+='<text class="gt ab" x="254" y="'+(O-5)+'" text-anchor="end">س</text><text class="gt ab" x="'+(O+6)+'" y="12">ص</text>';
+    return s+inner+'</svg>';
+  }
+  function gw(inner){ return '<div class="gwrap">'+grid(inner)+'</div>'; }
+  function pt(x,y,lab,cls,t){ return '<g class="'+cls+'" data-t="'+t+'"><circle cx="'+X(x)+'" cy="'+Y(y)+'" r="5"/><text x="'+(X(x)+7)+'" y="'+(Y(y)-7)+'">'+lab+'</text></g>'; }
+  function vm(v,t){ return '<line class="mir" data-t="'+t+'" x1="'+X(v)+'" y1="'+Y(-6)+'" x2="'+X(v)+'" y2="'+Y(6)+'"/>'; }
+  function hm(v,t){ return '<line class="mir" data-t="'+t+'" x1="'+X(-6)+'" y1="'+Y(v)+'" x2="'+X(6)+'" y2="'+Y(v)+'"/>'; }
+  function sg(a,b,c,d,t){ return '<line class="dist" data-t="'+t+'" x1="'+X(a)+'" y1="'+Y(b)+'" x2="'+X(c)+'" y2="'+Y(d)+'"/>'; }
+  function tx(x,y,s,t){ return '<text class="dl" data-t="'+t+'" x="'+X(x)+'" y="'+Y(y)+'" text-anchor="middle">'+s+'</text>'; }
+  function tri(P,cls,t){ return '<polygon class="shp '+cls+'" data-t="'+t+'" points="'+P.map(function(q){return X(q[0])+','+Y(q[1]);}).join(' ')+'"/>'; }
+  function head(k,t){ return '<div class="sh"><span class="n">'+k+'</span><h2>'+t+'</h2></div>'; }
+  var curGrid='';
+
+  function m(x){ return '\u2067−'+x+'\u2069'; }
+  function ln(a,b,c,d,cls,t){ return '<line class="'+cls+'" data-t="'+t+'" x1="'+X(a)+'" y1="'+Y(b)+'" x2="'+X(c)+'" y2="'+Y(d)+'"/>'; }
+  var SYS='<div class="line" data-t="6">'+eq('س + ص = ٥')+eq('س − ص = ١')+'</div>';
+
+  /* ---------- explanation ---------- */
+  S.push({title:'ما المعادلتان الآنيتان؟', n:'١', kind:'lesson', dur:26,
+    caps:[[0,'المعادلتان الآنيتان معادلتان فيهما مجهولان، س وص، ونريد قيماً تحقق المعادلتين معاً.'],[6,'مثلاً: س زائد ص يساوي خمسة، وس ناقص ص يساوي واحداً.'],[13,'نبحث عن عددين يحققان المعادلتين في الوقت نفسه.'],[19,'جرّب س يساوي ثلاثة وص يساوي اثنين.']],
+    html:head('١','ما المعادلتان الآنيتان؟')+'<div class="body"><div class="sent" data-t="0">مجهولان ومعادلتان، والحل يحقق الاثنتين معاً</div>'+SYS+
+      '<div class="line" data-t="13"><span class="ask">س = ؟ ، ص = ؟</span></div>'+
+      '<div class="line" data-t="19">'+eq(L('٣ + ٢ = ٥'))+eq(L('٣ − ٢ = ١'))+'</div>'+
+      '<div class="callout rule" data-t="19">س = ٣ ، ص = ٢ تحقق المعادلتين</div></div>'});
+
+  S.push({title:'طريقة الحذف', n:'٢', kind:'lesson', dur:38,
+    caps:[[0,'الطريقة الأولى: الحذف. نجمع المعادلتين لنتخلص من أحد المجهولين.'],[6,'نكتب المعادلتين فوق بعضهما.'],[12,'ص موجبة في الأولى وسالبة في الثانية، فتختفي عند الجمع.'],[19,'نجمع الطرفين: س زائد س يساوي اثنان س، وخمسة زائد واحد يساوي ستة.'],[27,'اثنان س يساوي ستة، فنقسم على اثنين ويكون س يساوي ثلاثة.'],[34,'وإذا تساوت إشارتا ص نطرح المعادلتين بدل أن نجمعهما.']],
+    html:head('٢','طريقة الحذف')+'<div class="body">'+SYS+
+      '<div class="note" data-t="12">ص مع ناقص ص تختفيان عند الجمع</div>'+
+      '<div class="line" data-t="19">'+eq('(س + ص) + (س − ص) = ٥ + ١')+'</div>'+
+      '<div class="line" data-t="23">'+eq('٢س = ٦')+'</div>'+
+      '<div class="line final" data-t="27">'+eq('س = ٣')+'</div>'+
+      '<div class="callout rule" data-t="34">نفس إشارة ص؟ نطرح بدل الجمع</div></div>'});
+
+  S.push({title:'إيجاد ص بالتعويض', n:'٣', kind:'lesson', dur:28,
+    caps:[[0,'عرفنا أن س يساوي ثلاثة. الآن نعوّض في أي معادلة لنجد ص.'],[6,'نأخذ المعادلة الأولى: س زائد ص يساوي خمسة.'],[11,'نضع ثلاثة مكان س.'],[16,'فيكون ص يساوي خمسة ناقص ثلاثة، أي اثنان.'],[22,'ونتحقق في المعادلة الثانية: ثلاثة ناقص اثنين يساوي واحد.']],
+    html:head('٣','إيجاد ص بالتعويض')+'<div class="body">'+
+      '<div class="line" data-t="6">'+eq('س + ص = ٥')+'</div>'+
+      '<div class="line" data-t="11">'+eq('٣ + ص = ٥')+'</div>'+
+      '<div class="line final" data-t="16">'+eq('ص = ٥ − ٣ = ٢')+'</div>'+
+      '<div class="callout" data-t="22">تحقق من المعادلة الثانية: '+eq(L('٣ − ٢ = ١'))+'</div></div>'});
+
+  S.push({title:'طريقة التعويض', n:'٤', kind:'lesson', dur:40,
+    caps:[[0,'الطريقة الثانية: التعويض. نضع معادلة داخل الأخرى.'],[5,'عندنا: ص يساوي س زائد اثنين، واثنان س زائد ص يساوي ثمانية.'],[12,'ص معروفة بدلالة س، فنضع س زائد اثنين مكان ص في المعادلة الثانية.'],[18,'فيصبح اثنان س زائد س زائد اثنين يساوي ثمانية.'],[24,'ثلاثة س زائد اثنين يساوي ثمانية، فثلاثة س يساوي ستة، وس يساوي اثنين.'],[33,'ثم ص يساوي اثنين زائد اثنين، أي أربعة.']],
+    html:head('٤','طريقة التعويض')+'<div class="body">'+
+      '<div class="line" data-t="5">'+eq('ص = س + ٢')+eq('٢س + ص = ٨')+'</div>'+
+      '<div class="note" data-t="12">نضع (س + ٢) مكان ص</div>'+
+      '<div class="line" data-t="18">'+eq('٢س + (س + ٢) = ٨')+'</div>'+
+      '<div class="line" data-t="24">'+eq('٣س + ٢ = ٨ ، ٣س = ٦')+'</div>'+
+      '<div class="line final" data-t="28">'+eq('س = ٢')+'</div>'+
+      '<div class="line final" data-t="33">'+eq('ص = ٢ + ٢ = ٤')+'</div></div>'});
+
+  S.push({title:'الحل بالرسم', n:'٥', kind:'lesson', dur:28,
+    caps:[[0,'الطريقة الثالثة: الرسم. كل معادلة تمثل خطاً مستقيماً.'],[6,'هذا خط س زائد ص يساوي خمسة.'],[12,'وهذا خط س ناقص ص يساوي واحداً.'],[18,'نقطة تقاطع الخطين تحقق المعادلتين معاً.'],[23,'إنها النقطة ثلاثة، اثنان، أي س يساوي ثلاثة وص يساوي اثنين.']],
+    html:head('٥','الحل بالرسم')+'<div class="body"><div class="tabs">'+
+      gw(ln(-1,6,6,-1,'l1',6)+ln(-5,-6,6,5,'l2',12)+pt(3,2,'(٣، ٢)','gi',18))+
+      '<div class="col" style="align-content:center;gap:.6em">'+
+        '<div class="line" data-t="6"><span class="chipx">الخط الأول</span>'+eq('س + ص = ٥')+'</div>'+
+        '<div class="line" data-t="12"><span class="chipx" style="background:var(--red);color:#fff">الخط الثاني</span>'+eq('س − ص = ١')+'</div>'+
+        '<div class="line final" data-t="23">'+eq('التقاطع: '+L('(٣، ٢)'))+'</div>'+
+      '</div></div></div>'});
+
+  /* ---------- quiz ---------- */
+  var N=10;
+  function quiz(k,qhtml,choices,ci,lines,read,caps){
+    var qi=k-1;
+    return {title:'سؤال '+ar(k), n:'؟', kind:'quiz', dur:read+N+9, read:read, N:N, q:qi, correct:ci, caps:caps,
+      html:'<div class="sh"><span class="n">؟</span><h2>سؤال '+ar(k)+' من ٤</h2></div>'+
+      '<div class="body">'+
+        '<div class="qeq qt">'+qhtml+'</div>'+
+        '<div class="qrow">'+curGrid+
+          '<div class="rcol">'+
+            '<div class="timer idle"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45"/></svg><b class="num">'+ar(N)+'</b></div>'+
+            '<button class="btn" type="button" data-skip="'+(read+N)+'" data-t="'+read+'" data-u="'+(read+N)+'">اكشف الإجابة الآن</button>'+
+          '</div>'+
+          '<div class="chs" role="group" aria-label="اختر الإجابة" data-t="'+read+'">'+
+            choices.map(function(c,i){ return '<button class="ch" type="button" data-i="'+i+'"><bdi dir="ltr">'+c+'</bdi></button>'; }).join('')+
+          '</div>'+
+        '</div>'+
+        '<div class="reveal">'+
+          '<div class="rrow" data-t="'+(read+N)+'"><span class="ans">الجواب: <bdi dir="ltr">'+choices[ci]+'</bdi></span><span class="fb"></span></div>'+
+          lines.map(function(l,i){ return '<div class="line" data-t="'+(read+N+2+i*2)+'">'+eq(l)+'</div>'; }).join('')+
+        '</div></div>',
+      tick:function(t,root,st,sc){
+        if(!st.num){ st.num=root.querySelector('.num'); st.arc=root.querySelector('.arc'); st.timer=root.querySelector('.timer'); st.C=2*Math.PI*45; st.arc.style.strokeDasharray=st.C; st.chs=root.querySelectorAll('.ch'); st.fb=root.querySelector('.fb'); }
+        var rem=t<sc.read?sc.N:Math.max(0,sc.N-(t-sc.read));
+        var shown=t<sc.read?sc.N:Math.ceil(rem-1e-6);
+        st.num.textContent=ar(shown);
+        st.arc.style.strokeDashoffset=st.C*(1-rem/sc.N);
+        st.timer.classList.toggle('idle',t<sc.read);
+        st.timer.classList.toggle('hot',t>=sc.read&&rem>0&&rem<=3);
+        if(t>=sc.read&&shown!==st.last&&shown<=3&&st.last!==undefined&&api.playing){ api.beep(shown===0?880:600, shown===0?0.35:0.12); }
+        st.last=shown;
+        var over=t>=sc.read+sc.N, a=answers[sc.q];
+        for(var i=0;i<st.chs.length;i++){
+          var b=st.chs[i];
+          b.disabled=over;
+          b.className='ch'+(a===i&&!over?' sel':'')+(over&&i===sc.correct?' right':'')+(over&&a===i&&i!==sc.correct?' wrong':'');
+        }
+        var msg=a===undefined?'لم تختر إجابة هذه المرة':(a===sc.correct?'إجابتك صحيحة، أحسنت!':'إجابتك غير صحيحة، راجع الحل');
+        var cls=a===undefined?'none':(a===sc.correct?'ok':'bad');
+        if(st.fb.textContent!==msg){ st.fb.textContent=msg; }
+        st.fb.className='fb '+cls;
+        if(over&&!st.done){ st.done=true; if(api.playing){ api.beep(a===sc.correct?880:300,0.25); } }
+      }};
+  }
+  function qc(t,a){ return [[0,t],[8,'اختر إجابتك. لديك عشر ثوانٍ!'],[18,'انتهى الوقت! '+a]]; }
+  curGrid='';
+
+  /* ---------- credits ---------- */
+  S.push({title:'اختر مستواك', n:'★', kind:'end', dur:14,
+    caps:[[0,'انتهى الشرح! اختر مستوى أنشطة التمايز الذي يناسبك: سهل أو متوسط أو صعب.'],[7,'تذكّر: الحذف بالجمع أو الطرح، والتعويض، والرسم. وتحقق دائماً من الحل.']],
+    html:head('★','اختر مستوى الأنشطة')+'<div class="body">'+
+      '<div class="sent" data-t="0">لكل مستوى أسئلة ووقت مختلف لكل سؤال</div>'+
+      '<div class="lvls" data-t="0">'+
+        '<a class="lvl" href="index.html#/run/lesson/g9-math-1-1/easy"><span class="st">★</span><span>سهل</span></a>'+
+        '<a class="lvl" href="index.html#/run/lesson/g9-math-1-1/medium"><span class="st">★★</span><span>متوسط</span></a>'+
+        '<a class="lvl" href="index.html#/run/lesson/g9-math-1-1/hard"><span class="st">★★★</span><span>صعب</span></a>'+
+      '</div>'+
+      '<div class="callout rule" data-t="7">الحذف · التعويض · الرسم</div>'+
+      '<button class="btn" type="button" data-replay data-t="9">أعد الشرح من البداية</button></div>'});
+
+  /* ---------- engine ---------- */
+  var $=function(s){ return document.querySelector(s); };
+  var stage=$('#stage'), startEl=$('#start'), capEl=$('#caption'), barEl=$('#bar'), chapEl=$('#chap'), timeEl=$('#time');
+  var playBtn=$('#play'), prevBtn=$('#prev'), nextBtn=$('#next'), sndBtn=$('#snd'), sndLab=$('#sndlab'), sndNote=$('#sndnote');
+  var api={playing:false, beep:function(){}};
+  var total=0, roots=[], states=[], fills=[];
+  S.forEach(function(sc,i){
+    sc.off=total; total+=sc.dur;
+    var el=document.createElement('section'); el.className='scene '+sc.kind; el.innerHTML=sc.html; el.hidden=true;
+    stage.insertBefore(el,startEl); roots.push(el); states.push({});
+    var b=document.createElement('button'); b.type='button'; b.className='seg'+(sc.kind==='quiz'?' q':''); b.style.setProperty('--d',sc.dur);
+    b.title=sc.title; b.setAttribute('aria-label','انتقل إلى: '+sc.title);
+    var f=document.createElement('span'); f.className='fill'; b.appendChild(f);
+    b.addEventListener('click',function(){ if(!started){ begin(); } seek(sc.off+0.01); });
+    barEl.appendChild(b); fills.push(f);
+  });
+
+  var T=0, cur=-1, capIdx=-1, last=0, sound=true, started=false;
+  var actx=null, voice=null, vOK=null;
+
+  function ensureAudio(){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){} }
+  api.beep=function(f,d){
+    if(!sound||!actx) return;
+    try{
+      var o=actx.createOscillator(), g=actx.createGain(), n=actx.currentTime;
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,n); g.gain.exponentialRampToValueAtTime(0.18,n+0.01); g.gain.exponentialRampToValueAtTime(0.0001,n+d);
+      o.connect(g); g.connect(actx.destination); o.start(n); o.stop(n+d+0.02);
+    }catch(e){}
+  };
+  function loadVoices(){
+    try{
+      var v=window.speechSynthesis.getVoices(); if(!v||!v.length) return;
+      var a=v.filter(function(x){ return /^ar/i.test(x.lang); });
+      vOK=a.length>0; voice=a[0]||null; sndNote.hidden=vOK!==false;
+    }catch(e){}
+  }
+  try{ if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.addEventListener('voiceschanged',loadVoices); } }catch(e){}
+  function speak(text){
+    if(!sound||vOK===false||!('speechSynthesis' in window)) return;
+    try{
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text); u.lang=voice?voice.lang:'ar-SA'; if(voice) u.voice=voice; u.rate=0.95;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function hush(){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+
+  function where(x){
+    for(var k=0;k<S.length;k++){ if(x<S[k].off+S[k].dur) return [k, x-S[k].off]; }
+    return [S.length-1, S[S.length-1].dur];
+  }
+  function fmt(s){ s=Math.floor(s); var r=s%60; return ar(Math.floor(s/60))+':'+ar(r<10?'0'+r:r); }
+
+  var ICON={
+    play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+    pause:'<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+    replay:'<svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>'
+  };
+  function playUI(){
+    var ended=T>=total-0.05;
+    playBtn.innerHTML=ended?ICON.replay:(api.playing?ICON.pause:ICON.play);
+    playBtn.setAttribute('aria-label',ended?'إعادة الدرس':(api.playing?'إيقاف مؤقت':'تشغيل'));
+  }
+
+  function render(){
+    var w=where(T), i=w[0], t=w[1], sc=S[i];
+    if(i!==cur){
+      roots.forEach(function(r,k){ r.hidden=(k!==i); });
+      cur=i; states[i]={}; capIdx=-1;
+    }
+    var root=roots[i];
+    root.querySelectorAll('[data-t]').forEach(function(el){
+      var a=parseFloat(el.getAttribute('data-t')), u=el.getAttribute('data-u');
+      el.classList.toggle('on',t>=a&&(u===null||t<parseFloat(u)));
+    });
+    if(sc.tick) sc.tick(t,root,states[i],sc);
+    var ci=0; for(var c=0;c<sc.caps.length;c++){ if(sc.caps[c][0]<=t) ci=c; }
+    if(ci!==capIdx){
+      capIdx=ci; capEl.textContent=sc.caps[ci][1];
+      if(api.playing) speak(sc.caps[ci][1]);
+    }
+    fills.forEach(function(f,k){ f.style.transform='scaleX('+(k<i?1:k>i?0:Math.min(1,t/sc.dur))+')'; });
+    chapEl.textContent='المشهد '+ar(i+1)+' من '+ar(S.length)+' · '+sc.title;
+    timeEl.textContent=fmt(T)+' / '+fmt(total);
+  }
+
+  function setPlaying(p){
+    api.playing=p;
+    if(p){ ensureAudio(); last=performance.now(); capIdx=-1; } else { hush(); }
+    playUI(); render();
+  }
+  function seek(x){ T=Math.max(0,Math.min(total,x)); capIdx=-1; cur=-1; states=S.map(function(){return {};}); playUI(); render(); }
+  function begin(){ if(!started){ started=true; startEl.hidden=true; } if(T>=total-0.05) T=0; setPlaying(true); }
+
+  $('#bigplay').addEventListener('click',begin);
+  playBtn.addEventListener('click',function(){
+    if(!started||T>=total-0.05){ begin(); return; }
+    setPlaying(!api.playing);
+  });
+  nextBtn.addEventListener('click',function(){ if(!started){ begin(); } var i=where(T)[0]; seek(i+1<S.length?S[i+1].off+0.01:total); });
+  prevBtn.addEventListener('click',function(){ var w=where(T); seek(w[1]>2?S[w[0]].off+0.01:S[Math.max(0,w[0]-1)].off+0.01); });
+  sndBtn.addEventListener('click',function(){
+    sound=!sound; sndBtn.setAttribute('aria-pressed',String(sound)); sndLab.textContent=sound?'الصوت: يعمل':'الصوت: متوقف';
+    if(!sound) hush(); else if(api.playing){ ensureAudio(); capIdx=-1; render(); }
+  });
+  stage.addEventListener('click',function(e){
+    var c=e.target.closest('.ch');
+    if(c){
+      var w=where(T), sc=S[w[0]];
+      if(sc.kind==='quiz'&&api.playing&&w[1]>=sc.read&&w[1]<sc.read+sc.N){ answers[sc.q]=+c.getAttribute('data-i'); api.beep(660,0.1); render(); }
+      return;
+    }
+    var s=e.target.closest('[data-skip]'); if(s){ seek(S[cur].off+parseFloat(s.getAttribute('data-skip'))+0.01); return; }
+    if(e.target.closest('[data-replay]')){ answers.length=0; T=0; started=true; startEl.hidden=true; cur=-1; states=S.map(function(){return {};}); setPlaying(true); }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.target.closest&&e.target.closest('button')) return;
+    if(e.key===' '){ e.preventDefault(); playBtn.click(); }
+    else if(e.key==='ArrowLeft'){ nextBtn.click(); } else if(e.key==='ArrowRight'){ prevBtn.click(); }
+  });
+  document.addEventListener('visibilitychange',function(){ if(document.hidden&&api.playing) setPlaying(false); });
+
+  function loop(now){
+    if(api.playing){
+      var dt=Math.min(0.1,(now-last)/1000); last=now; T+=dt;
+      if(T>=total){ T=total; api.playing=false; hush(); playUI(); }
+      render();
+    }
+    requestAnimationFrame(loop);
+  }
+  playUI(); render(); requestAnimationFrame(loop);
+})();
+</script>
+
+</body></html>
