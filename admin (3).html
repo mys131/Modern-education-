@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
+<title>لوحة المشرف — المنصة الحديثة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  :root{--bg:#f4f7ff;--surface:#fff;--ink:#14213d;--muted:#4a5878;--line:#e1e8fb;--line2:#d5def5;
+    --blue:#2457d6;--orange:#ffb02e;--pink:#ff8fb1;--mint:#7be0a8;--ok:#1e7a4f;--bad:#c02f3a;
+    --f-d:'Cairo','Tajawal',sans-serif;--f-b:'Tajawal',system-ui,sans-serif}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:16px;line-height:1.7}
+  button{font:inherit;color:inherit;cursor:pointer}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  input,select{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+  h1,h2,h3{font-family:var(--f-d);font-weight:900;margin:0}
+
+  /* دخول */
+  .gate{min-height:100vh;display:grid;place-items:center;padding:20px;background:var(--blue);position:relative;overflow:hidden}
+  .gate::before{content:"";position:absolute;top:-170px;left:-120px;width:420px;height:420px;border-radius:50%;background:var(--orange)}
+  .gate::after{content:"";position:absolute;bottom:-150px;right:-90px;width:340px;height:340px;border-radius:50%;background:#4f7df0}
+  .box{position:relative;z-index:1;width:100%;max-width:420px;background:#fff;border-radius:28px;padding:28px;box-shadow:0 30px 60px -24px rgba(10,20,60,.55)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--blue);transform:rotate(-6deg);flex:none}
+  .logo svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .fl{display:block;margin:14px 0 6px;font-weight:700;font-size:.95rem}
+  .fi{width:100%;padding:12px 15px;border:0;border-radius:14px;background:var(--bg);box-shadow:inset 0 0 0 2px var(--line2);font-size:1rem}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border:0;border-radius:999px;font-weight:700;font-size:.95rem;background:#fff;box-shadow:inset 0 0 0 2px var(--line2)}
+  .btn.p{background:var(--blue);color:#fff;box-shadow:none}
+  .btn.o{background:var(--orange);color:#3b2600;box-shadow:none}
+  .btn.d{box-shadow:inset 0 0 0 2px var(--bad);color:var(--bad)}
+  .btn.big{width:100%;margin-top:18px;padding:14px;border-radius:18px;font-size:1.05rem}
+  .err{margin:12px 0 0;padding:10px 14px;border-radius:14px;background:#ffd3de;color:#5a1030;font-weight:700;font-size:.92rem}
+  .note{margin:14px 0 0;font-size:.85rem;color:var(--muted);line-height:1.7}
+
+  /* الهيكل */
+  #app{display:flex;min-height:100vh}
+  aside{width:250px;flex:none;background:#fff;box-shadow:-1px 0 0 var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+  .nv{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border:0;border-radius:14px;background:none;color:var(--muted);font-weight:500;text-align:right}
+  .nv.on{background:var(--blue);color:#fff;font-weight:700}
+  .nv i{width:10px;height:10px;border-radius:3px;background:currentColor;opacity:.55;flex:none}
+  .me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;background:var(--bg)}
+  .av{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--orange);color:#3b2600;font-weight:900;font-family:var(--f-d);flex:none}
+  main{flex:1;min-width:0;padding:22px 28px 60px}
+  .head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .head .t{flex:1;min-width:200px}
+  .head h1{font-size:1.65rem;line-height:1.3}
+  .head p{margin:0;font-size:.9rem;color:var(--muted)}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:700;background:#d7f5e4;color:#0b3a22}
+  .pill i{width:9px;height:9px;border-radius:50%;background:var(--ok);display:block}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px}
+  .grid2e{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .kp{padding:16px 18px;border-radius:22px;display:flex;flex-direction:column}
+  .kp b{font-family:var(--f-d);font-weight:900;font-size:2.1rem;line-height:1.3}
+  .kp small{opacity:.88;font-size:.82rem}
+  .cd{background:#fff;border-radius:22px;box-shadow:inset 0 0 0 2px var(--line);padding:18px 20px;min-width:0}
+  .cd h3{font-size:1.1rem;margin-bottom:4px}
+  .cd .s{margin:0 0 12px;font-size:.85rem;color:var(--muted)}
+  .bars{display:flex;gap:6px;align-items:flex-end;height:160px}
+  .br{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+  .br i{display:block;width:100%;max-width:30px;border-radius:8px 8px 4px 4px;background:#c9d6fb;min-height:3px}
+  .br i.hi{background:var(--blue)}
+  .br span{font-size:.72rem;color:var(--muted);line-height:1}
+  .br em{font-style:normal;font-size:.72rem;font-weight:700}
+  .rw{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:.95rem}
+  .rw .l{width:92px;flex:none}
+  .rw .tr{flex:1;height:10px;border-radius:5px;background:#e8eefc}
+  .rw .tr i{display:block;height:100%;border-radius:5px}
+  .rw b{width:44px;text-align:left;flex:none}
+  .ev{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #eef2fd;font-size:.95rem}
+  .ev:last-child{border-bottom:0}
+  .ev em{font-style:normal;color:var(--muted);font-size:.8rem;margin-inline-start:auto;white-space:nowrap}
+  .dt{width:10px;height:10px;border-radius:50%;flex:none}
+  .empty{padding:30px 10px;text-align:center;color:var(--muted)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .ch{padding:6px 16px;border:0;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 2px var(--line2);font-size:.88rem;font-weight:700;color:var(--muted)}
+  .ch.on{background:var(--ink);color:#fff;box-shadow:none}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:620px}
+  th{padding:8px 12px;text-align:right;color:var(--muted);font-size:.8rem;border-bottom:2px solid var(--line)}
+  td{padding:10px 12px;border-bottom:1px solid #eef2fd;white-space:nowrap}
+  tr.sel td{background:#eaf0ff}
+  tr.cl{cursor:pointer}
+  .tg{display:inline-block;padding:1px 10px;border-radius:999px;font-size:.75rem;font-weight:700}
+  .split{display:grid;grid-template-columns:1fr 330px;gap:14px;align-items:start}
+  .kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eef2fd;font-size:.9rem}
+  .kv span:first-child{color:var(--muted)}
+  .pb{height:9px;border-radius:5px;background:#e8eefc;margin:4px 0 8px}
+  .pb i{display:block;height:100%;border-radius:5px}
+  .cm{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eef2fd}
+  .cm:last-child{border-bottom:0}
+  .cm .x{flex:1}
+  .cm small{display:block;color:var(--muted);font-size:.82rem}
+  .sw{width:46px;height:26px;border:0;border-radius:13px;background:var(--line2);position:relative;flex:none;padding:0}
+  .sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:all .15s}
+  .sw.on{background:var(--ok)}
+  .sw.on::after{right:auto;left:3px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .row .fi{flex:1;min-width:160px}
+  .ad{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eef2fd}
+  .ad:last-child{border-bottom:0}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+  .toast.on{opacity:1}
+  @media (max-width:900px){
+    #app{flex-direction:column}
+    aside{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:12px;gap:6px;box-shadow:0 1px 0 var(--line)}
+    aside .brand,aside .me{display:none}
+    .nv{width:auto;white-space:nowrap;padding:9px 16px}
+    main{padding:16px 14px 60px}
+    .grid4{grid-template-columns:1fr 1fr}
+    .grid2,.grid2e,.split{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+
+<script src="firebase-config.js"></script>
+<script src="lessons.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const root = $("#root");
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ar = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const CN = {EG:"مصر",SA:"السعودية",OM:"سلطنة عُمان",AE:"الإمارات",KW:"الكويت",QA:"قطر",BH:"البحرين",IQ:"العراق",JO:"الأردن",LB:"لبنان",SY:"سوريا",PS:"فلسطين",YE:"اليمن",SD:"السودان",LY:"ليبيا",TN:"تونس",DZ:"الجزائر",MA:"المغرب",XX:"دولة أخرى","?":"غير معروف"};
+const LV = {easy:"سهل",medium:"متوسط",hard:"صعب"};
+const ROLES = {owner:"مالك",editor:"محرر محتوى",viewer:"عرض فقط"};
+const lessonTitle = id => { try { const l = (LESSONS||[]).find(x => x.id === id) || (typeof UNITS!=="undefined"?UNITS.find(x=>x.id===id):null); return l ? l.title : id; } catch(e){ return id; } };
+const cn = c => CN[c] || c || "غير معروف";
+const vname = sid => "زائر " + ar((parseInt(String(sid).slice(0,6),16) % 9000) + 1000);
+const dayKey = d => d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+const fmtTime = d => d.toLocaleString("ar-EG",{hour:"2-digit",minute:"2-digit"});
+const fmtFull = d => d.toLocaleString("ar-EG",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+const ago = d => { const s = Math.max(0,(Date.now()-d)/1000); return s<60?"الآن":s<3600?"قبل "+ar(Math.floor(s/60))+" دقيقة":s<86400?"قبل "+ar(Math.floor(s/3600))+" ساعة":"قبل "+ar(Math.floor(s/86400))+" يوم"; };
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); setTimeout(()=>t.classList.remove("on"),2200); }
+
+const S = { user:null, role:null, events:[], adminLog:[], admins:[], blocked:new Set(), settings:{}, tab:"overview", filter:"all", sel:null, err:"", db:null, auth:null };
+const TABS = [["overview","نظرة عامة"],["students","الطلاب"],["log","سجل النشاط"],["manage","الإدارة والصلاحيات"],["controls","الأوامر والتحكم"]];
+const canEdit = () => S.role === "owner" || S.role === "editor";
+
+/* ---------- Firebase ---------- */
+const SDK = "https://www.gstatic.com/firebasejs/10.12.5/";
+const loadJs = src => new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+const configured = () => window.FIREBASE_CONFIG && /^AIza/.test(window.FIREBASE_CONFIG.apiKey || "");
+const ts = () => firebase.firestore.FieldValue.serverTimestamp();
+
+async function boot(){
+  if (!configured()) { setupScreen(); return; }
+  try {
+    if (!window.firebase) { await loadJs(SDK+"firebase-app-compat.js"); await loadJs(SDK+"firebase-auth-compat.js"); await loadJs(SDK+"firebase-firestore-compat.js"); }
+    firebase.initializeApp(window.FIREBASE_CONFIG);
+    S.db = firebase.firestore(); S.auth = firebase.auth();
+  } catch (e) { root.innerHTML = gate(`<h2>تعذّر الاتصال</h2><p class="note">تأكد من الإنترنت وحاول مرة أخرى.</p>`); return; }
+  S.auth.onAuthStateChanged(async user => {
+    S.user = user;
+    if (!user) { loginScreen(); return; }
+    try {
+      const d = await S.db.doc("admins/"+user.uid).get();
+      if (!d.exists) { S.role = null; denied(); return; }
+      S.role = d.data().role || "viewer";
+      await loadAll(); shell();
+      try { if (!sessionStorage.getItem("adm_in")) { sessionStorage.setItem("adm_in","1"); logAdmin("دخول"); } } catch(e){}
+    } catch (e) { S.err = "تعذّر قراءة الصلاحيات. تأكد من نشر قواعد الأمان."; denied(); }
+  });
+}
+async function loadAll(){
+  const q = async (c, n) => (await S.db.collection(c).orderBy("t","desc").limit(n).get()).docs.map(x => { const o = x.data(); o.id = x.id; o.d = o.t && o.t.toDate ? o.t.toDate() : new Date(); return o; });
+  const [ev, lg, st, bl] = await Promise.all([
+    q("events", 1000), q("adminLog", 100),
+    S.db.doc("settings/site").get(), S.db.collection("blocked").get().catch(()=>({docs:[]}))
+  ]);
+  S.events = ev; S.adminLog = lg; S.settings = st.exists ? st.data() : {};
+  S.blocked = new Set(bl.docs.map(x => x.id));
+  S.admins = S.role === "owner" ? (await S.db.collection("admins").get()).docs.map(x => ({uid:x.id, ...x.data()})) : [];
+}
+async function logAdmin(action, detail){
+  try { await S.db.collection("adminLog").add({t:ts(), by:S.user.email, action, detail: detail||""}); S.adminLog.unshift({d:new Date(), by:S.user.email, action, detail:detail||""}); } catch(e){}
+}
+
+/* ---------- شاشات الدخول ---------- */
+const LOGO = '<span class="logo"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5A1.5 1.5 0 0 1 4 17.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v15h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></span>';
+const gate = inner => `<div class="gate"><div class="box"><div class="brand">${LOGO}<div><h2 style="font-size:1.25rem;line-height:1.3">المنصة الحديثة</h2><div style="font-size:.88rem;color:var(--muted)">دخول المشرفين</div></div></div>${inner}</div></div>`;
+function setupScreen(){
+  root.innerHTML = gate(`<h2 style="margin-top:18px;font-size:1.1rem">لم يتم الإعداد بعد</h2>
+    <p class="note" style="font-size:.95rem">لوحة المشرف تحتاج ربط Firebase. افتح ملف <b>firebase-config.js</b> والصق بيانات مشروعك، واتبع ملف الشرح <b>admin-setup-ar.md</b>.</p>`);
+}
+function loginScreen(msg){
+  root.innerHTML = gate(`<form id="lf" autocomplete="on">
+    <label class="fl" for="em">البريد الإلكتروني</label><input class="fi" id="em" type="email" dir="ltr" autocomplete="username" required>
+    <label class="fl" for="pw">كلمة المرور</label><input class="fi" id="pw" type="password" dir="ltr" autocomplete="current-password" required>
+    ${msg ? `<p class="err" role="alert">${esc(msg)}</p>` : ""}
+    <button class="btn p big" id="lb" type="submit">دخول</button></form>
+    <button class="btn big" id="gb" type="button" style="margin-top:10px">الدخول بحساب Google</button>
+    <p class="note" style="text-align:center">هذه الصفحة للمشرفين فقط. كل دخول وكل إجراء يُسجَّل.</p>`);
+  $("#gb").onclick = async () => {
+    try { await S.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    catch (er) { if (er.code !== "auth/popup-closed-by-user" && er.code !== "auth/cancelled-popup-request") loginScreen(er.code === "auth/popup-blocked" ? "المتصفح منع النافذة المنبثقة. اسمح بها وحاول مرة أخرى" : "تعذّر الدخول بحساب Google"); }
+  };
+  $("#lf").onsubmit = async e => {
+    e.preventDefault(); $("#lb").disabled = true;
+    try { await S.auth.signInWithEmailAndPassword($("#em").value.trim(), $("#pw").value); }
+    catch (er) {
+      const m = {"auth/invalid-credential":"البريد أو كلمة المرور غير صحيحة","auth/wrong-password":"البريد أو كلمة المرور غير صحيحة","auth/user-not-found":"البريد أو كلمة المرور غير صحيحة","auth/too-many-requests":"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى","auth/network-request-failed":"لا يوجد اتصال بالإنترنت"}[er.code] || "تعذّر تسجيل الدخول";
+      loginScreen(m);
+    }
+  };
+}
+function denied(){
+  root.innerHTML = gate(`<h2 style="margin-top:18px;font-size:1.1rem">ليس لديك صلاحية</h2>
+    <p class="note" style="font-size:.95rem">${esc(S.err || "هذا الحساب غير مضاف كمشرف. اطلب من المالك إضافته بالمعرّف التالي.")}</p>
+    <label class="fl">البريد</label><div class="fi" dir="ltr" style="text-align:right;overflow-wrap:anywhere">${esc(S.user.email||"")}</div>
+    <label class="fl">المعرّف (UID)</label><div class="fi" id="uidbox" dir="ltr" style="text-align:right;overflow-wrap:anywhere;user-select:all">${esc(S.user.uid)}</div>
+    <button class="btn p big" id="cp" type="button">نسخ المعرّف</button>
+    <button class="btn big" id="so" style="margin-top:10px">تسجيل الخروج</button>`);
+  $("#so").onclick = () => S.auth.signOut();
+  $("#cp").onclick = async () => { try { await navigator.clipboard.writeText(S.user.uid); toast("تم النسخ"); } catch (e) { toast("اضغط مطولًا على المعرّف لنسخه"); } };
+}
+
+/* ---------- الهيكل ---------- */
+function shell(){
+  root.innerHTML = `<div id="app"><aside>
+    <div class="brand" style="padding:0 6px 18px">${LOGO}<div><div style="font-family:var(--f-d);font-weight:900;line-height:1.2">المنصة الحديثة</div><div style="font-size:.8rem;color:var(--muted)">لوحة المشرف</div></div></div>
+    ${TABS.map(t => `<button class="nv ${S.tab===t[0]?"on":""}" data-t="${t[0]}"><i></i>${t[1]}</button>`).join("")}
+    <div class="me"><span class="av">${esc((S.user.email||"?")[0].toUpperCase())}</span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:.9rem;line-height:1.4;overflow:hidden;text-overflow:ellipsis" dir="ltr">${esc(S.user.email)}</div><div style="font-size:.78rem;color:var(--muted)">${ROLES[S.role]||S.role}</div></div><button class="btn" id="so" style="padding:6px 12px">خروج</button></div>
+  </aside><main id="main"></main></div>`;
+  document.querySelectorAll(".nv").forEach(b => b.onclick = () => { S.tab = b.dataset.t; S.sel = null; shell(); });
+  $("#so").onclick = async () => { await logAdmin("خروج"); try { sessionStorage.removeItem("adm_in"); } catch(e){} S.auth.signOut(); };
+  render();
+}
+function render(){
+  const m = $("#main");
+  const f = {overview, students, log: logTab, manage, controls}[S.tab];
+  m.innerHTML = f();
+  bind();
+}
+
+/* ---------- حسابات ---------- */
+const views = e => e.filter(x => x.type === "view" || x.type === "lesson_open" || x.type === "quiz_done");
+function stats(){
+  const now = new Date(), today = dayKey(now), y = new Date(now); y.setDate(y.getDate()-1); const yk = dayKey(y);
+  const uniq = (arr) => new Set(arr.map(x => x.sid)).size;
+  const tEv = S.events.filter(e => dayKey(e.d) === today), yEv = S.events.filter(e => dayKey(e.d) === yk);
+  const active = S.events.filter(e => now - e.d < 5*60*1000);
+  const quizT = tEv.filter(e => e.type === "quiz_done");
+  const tot = quizT.reduce((a,e)=>a+(e.total||0),0), sc = quizT.reduce((a,e)=>a+(e.score||0),0);
+  const days = [];
+  for (let i = 13; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate()-i); const k = dayKey(d); days.push({d, n: uniq(S.events.filter(e => dayKey(e.d) === k))}); }
+  const since = new Date(now); since.setDate(since.getDate()-14);
+  const recent = S.events.filter(e => e.d > since);
+  const by = (key, fn) => { const m = {}; const seen = new Set(); recent.forEach(e => { const k = fn(e); const u = k+"|"+e.sid; if (seen.has(u)) return; seen.add(u); m[k] = (m[k]||0)+1; }); const sum = Object.values(m).reduce((a,b)=>a+b,0)||1; return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,n])=>({k,n,p:Math.round(n/sum*100)})); };
+  const lvMap = {}; recent.filter(e=>e.type==="quiz_done"&&LV[e.level]).forEach(e => lvMap[e.level] = (lvMap[e.level]||0)+1);
+  const lvSum = Object.values(lvMap).reduce((a,b)=>a+b,0)||1;
+  return { vToday: uniq(tEv), vY: uniq(yEv), active: uniq(active), answers: tot, pct: tot ? Math.round(sc/tot*100) : 0, days, countries: by("c", e => e.country||"?"), devs: by("d", e => e.dev||"?"), lv: ["easy","medium","hard"].map(k => ({k, n: lvMap[k]||0, p: Math.round((lvMap[k]||0)/lvSum*100)})), hardN: lvMap.hard||0, quizN: Object.values(lvMap).reduce((a,b)=>a+b,0) };
+}
+function describe(e){
+  const pl = {"":"الرئيسية","#/grades":"الصفوف","#/faq":"الأسئلة الشائعة","#/diff":"أنشطة التمايز","#/tests":"الاختبارات","#/privacy":"سياسة الخصوصية"};
+  if (e.type === "view" && /^#\/run\/(lesson|unit)\//.test(e.path||"")) { const [, , , id, lv] = (e.path||"").split("/"); return "بدأ نشاطًا: " + lessonTitle(id) + (LV[lv] ? " · " + LV[lv] : ""); }
+  if (e.type === "view" && /^#\/(diff|test|list|grade|lesson)/.test(e.path||"")) return "زيارة صفحة: " + (e.path||"");
+  if (e.type === "view") return "زيارة: " + (pl[e.path||""] || e.path || "الرئيسية");
+  if (e.type === "lesson_open") return "فتح درس «" + lessonTitle(e.lesson) + "»";
+  if (e.type === "quiz_done") return (e.kind === "test" ? "أنهى الاختبار" : "أنهى المستوى " + (LV[e.level]||"")) + " (" + ar(e.score||0) + " من " + ar(e.total||0) + ") · " + lessonTitle(e.lesson);
+  if (e.type === "share") return "مشاركة رابط الموقع";
+  if (e.type === "error") return "خطأ: " + (e.msg||"");
+  return e.type;
+}
+const COLOR = {view:"#2457d6", lesson_open:"#ffb02e", quiz_done:"#7be0a8", share:"#ff8fb1", error:"#c02f3a"};
+const bars = (rows, colors) => rows.length ? rows.map((r,i) => `<div class="rw"><span class="l">${esc(r.l)}</span><div class="tr"><i style="width:${Math.max(r.p,3)}%;background:${colors[i%colors.length]}"></i></div><b>${ar(r.p)}٪</b></div>`).join("") : `<div class="empty">لا توجد بيانات بعد</div>`;
+
+/* ---------- التبويبات ---------- */
+function overview(){
+  const s = stats(), max = Math.max(1, ...s.days.map(d => d.n));
+  const delta = s.vY ? Math.round((s.vToday - s.vY) / s.vY * 100) : null;
+  const last = S.events.slice(0, 6);
+  return `<div class="head"><div class="t"><h1>نظرة عامة</h1><p>آخر ١٤ يومًا · أحدث ${ar(S.events.length)} حدثًا</p></div><button class="btn" id="rf">تحديث</button><span class="pill"><i></i>الموقع يعمل</span></div>
+  <div class="grid4">
+    <div class="kp" style="background:var(--blue);color:#fff"><span>زوار اليوم</span><b>${ar(s.vToday)}</b><small>${delta===null?"لا مقارنة بعد":(delta>=0?"↑ ":"↓ ")+ar(Math.abs(delta))+"٪ عن أمس"}</small></div>
+    <div class="kp" style="background:var(--orange);color:#3b2600"><span>نشطون الآن</span><b>${ar(s.active)}</b><small>آخر ٥ دقائق</small></div>
+    <div class="kp" style="background:var(--pink);color:#4a0a22"><span>إجابات اليوم</span><b>${ar(s.answers)}</b><small>${s.answers ? ar(s.pct)+"٪ منها صحيحة" : "لا إجابات بعد"}</small></div>
+    <div class="kp" style="background:var(--mint);color:#0b3a22"><span>أنشطة مكتملة</span><b>${ar(s.quizN)}</b><small>${ar(s.hardN)} في المستوى الصعب</small></div>
+  </div>
+  <div class="grid2">
+    <div class="cd"><h3>الزوار يوميًا</h3><p class="s">عدد الزوار المختلفين في كل يوم</p>
+      <div class="bars">${s.days.map((d,i) => `<div class="br"><em>${d.n?ar(d.n):""}</em><i class="${i===13?"hi":""}" style="height:${Math.round(d.n/max*110)}px"></i><span>${i===13?"اليوم":ar(d.d.getDate())}</span></div>`).join("")}</div></div>
+    <div class="cd"><h3>من أين يزورنا الطلاب</h3><p class="s">الدولة من المنطقة الزمنية (بدون IP)</p>${bars(s.countries.slice(0,5).map(c=>({l:cn(c.k),p:c.p})), ["#2457d6","#ffb02e","#ff8fb1","#7be0a8","#c9d6fb"])}</div>
+  </div>
+  <div class="grid2e">
+    <div class="cd"><h3>آخر النشاط</h3>${last.length ? last.map(e => `<div class="ev"><i class="dt" style="background:${COLOR[e.type]||"#999"}"></i><span>${esc(describe(e))}</span><em>${ago(e.d)}</em></div>`).join("") : `<div class="empty">لا يوجد نشاط بعد</div>`}</div>
+    <div class="cd"><h3>الأجهزة والمستويات</h3><p class="s">&nbsp;</p>${bars([...s.devs.map(d=>({l:d.k==="mobile"?"موبايل":d.k==="desktop"?"كمبيوتر":"غير معروف",p:d.p})), ...s.lv.map(l=>({l:"مستوى "+LV[l.k],p:l.p}))], ["#2457d6","#2457d6","#7be0a8","#ffb02e","#ff8fb1"])}</div>
+  </div>`;
+}
+function groupStudents(){
+  const m = new Map();
+  S.events.forEach(e => {
+    let o = m.get(e.sid);
+    if (!o) { o = {sid:e.sid, first:e.d, last:e.d, days:new Set(), country:e.country, tz:e.tz, dev:e.dev, br:e.br, quiz:[], n:0}; m.set(e.sid, o); }
+    if (e.d < o.first) o.first = e.d; if (e.d > o.last) o.last = e.d;
+    o.days.add(dayKey(e.d)); o.n++;
+    if (e.type === "quiz_done") o.quiz.push(e);
+  });
+  return [...m.values()].sort((a,b) => b.last - a.last);
+}
+function students(){
+  const list = groupStudents();
+  const sel = list.find(x => x.sid === S.sel) || null;
+  const pct = o => { const t = o.quiz.reduce((a,e)=>a+(e.total||0),0), s = o.quiz.reduce((a,e)=>a+(e.score||0),0); return t ? Math.round(s/t*100) : null; };
+  const rows = list.length ? `<div class="tw"><table><thead><tr><th>الطالب</th><th>آخر ظهور</th><th>الموقع</th><th>الجهاز</th><th>أيام الزيارة</th><th>الأنشطة</th><th>المتوسط</th></tr></thead><tbody>${list.slice(0,200).map(o => `<tr class="cl ${o.sid===S.sel?"sel":""}" data-sid="${esc(o.sid)}"><td>${vname(o.sid)}${S.blocked.has(o.sid)?` <span class="tg" style="background:#ffd3de;color:#5a1030">محظور</span>`:""}</td><td>${ago(o.last)}</td><td>${esc(cn(o.country))}</td><td>${o.dev==="mobile"?"موبايل":"كمبيوتر"} · ${esc(o.br||"")}</td><td>${ar(o.days.size)}</td><td>${ar(o.quiz.length)}</td><td>${pct(o)===null?"—":ar(pct(o))+"٪"}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">لا يوجد طلاب بعد. ستظهر الزيارات هنا بمجرد أن يستخدم الطلاب الموقع.</div>`;
+  let side = `<div class="cd"><div class="empty">اختر طالبًا من الجدول لعرض تفاصيله</div></div>`;
+  if (sel) {
+    const best = {}; sel.quiz.forEach(e => { const k = e.lesson+"|"+(e.level||e.kind); if (!best[k] || (e.score||0) > best[k].score) best[k] = {lesson:e.lesson, level:e.level, kind:e.kind, score:e.score||0, total:e.total||1}; });
+    side = `<div class="cd"><div class="row" style="flex-wrap:nowrap"><span class="av" style="background:var(--pink);color:#4a0a22;width:48px;height:48px">${ar(vname(sel.sid).slice(-2))}</span><div><h3 style="margin:0">${vname(sel.sid)}</h3><div style="font-size:.8rem;color:var(--muted)">آخر ظهور: ${ago(sel.last)}</div></div></div>
+      <div style="margin-top:10px"><div class="kv"><span>الدولة</span><span>${esc(cn(sel.country))}</span></div><div class="kv"><span>المنطقة الزمنية</span><span dir="ltr">${esc(sel.tz||"—")}</span></div><div class="kv"><span>الجهاز</span><span>${sel.dev==="mobile"?"موبايل":"كمبيوتر"} · ${esc(sel.br||"")}</span></div><div class="kv"><span>أول زيارة</span><span>${fmtFull(sel.first)}</span></div><div class="kv"><span>أيام الزيارة</span><span>${ar(sel.days.size)}</span></div><div class="kv"><span>المعرّف</span><span dir="ltr" style="font-size:.75rem">${esc(sel.sid)}</span></div></div>
+      <p style="margin:14px 0 6px;font-weight:700;font-size:.9rem">أفضل نتيجة في كل نشاط</p>
+      ${Object.values(best).length ? Object.values(best).map(b => `<div style="font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between"><span>${esc(lessonTitle(b.lesson))} · ${b.kind==="test"?"اختبار":LV[b.level]||""}</span><span>${ar(b.score)} / ${ar(b.total)}</span></div><div class="pb"><i style="width:${Math.round(b.score/b.total*100)}%;background:${b.score/b.total>=.6?"var(--mint)":"var(--orange)"}"></i></div>`).join("") : `<div class="note">لم يُكمل أي نشاط بعد</div>`}
+      <div class="row" style="margin-top:12px">${S.blocked.has(sel.sid) ? `<button class="btn" data-unblock="${esc(sel.sid)}" ${canEdit()?"":"disabled"}>إلغاء الحظر</button>` : `<button class="btn d" data-block="${esc(sel.sid)}" ${canEdit()?"":"disabled"}>حظر هذا الجهاز</button>`}</div>
+      <p class="note">لا نخزّن الـ IP أو الاسم. المعرّف عشوائي ويخص هذا المتصفح فقط.</p></div>`;
+  }
+  return `<div class="head"><div class="t"><h1>الطلاب</h1><p>${ar(list.length)} زائرًا في آخر الأحداث المحمّلة</p></div><button class="btn" id="rf">تحديث</button></div><div class="split"><div class="cd">${rows}</div>${side}</div>`;
+}
+const FILTERS = [["all","الكل"],["view","زيارات"],["lesson_open","دروس"],["quiz_done","إجابات"],["error","أخطاء"],["admin","إجراءات الإدارة"]];
+function logTab(){
+  let body;
+  if (S.filter === "admin") {
+    body = S.adminLog.length ? `<div class="tw"><table><thead><tr><th>الوقت</th><th>المشرف</th><th>الإجراء</th><th>التفاصيل</th></tr></thead><tbody>${S.adminLog.map(a => `<tr><td>${fmtFull(a.d)}</td><td dir="ltr" style="text-align:right">${esc(a.by)}</td><td><span class="tg" style="background:#ffe9bd;color:#4a3000">${esc(a.action)}</span></td><td>${esc(a.detail)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">لا توجد إجراءات إدارة مسجلة</div>`;
+  } else {
+    const ev = S.events.filter(e => S.filter === "all" || e.type === S.filter).slice(0, 300);
+    body = ev.length ? `<div class="tw"><table><thead><tr><th>الوقت</th><th>الحدث</th><th>الطالب</th><th>الموقع</th><th>الجهاز</th></tr></thead><tbody>${ev.map(e => `<tr><td>${fmtFull(e.d)}</td><td><span class="dt" style="display:inline-block;background:${COLOR[e.type]||"#999"};margin-inline-end:8px"></span>${esc(describe(e))}</td><td>${vname(e.sid)}</td><td>${esc(cn(e.country))}</td><td>${e.dev==="mobile"?"موبايل":"كمبيوتر"}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">لا توجد أحداث</div>`;
+  }
+  return `<div class="head"><div class="t"><h1>سجل النشاط</h1><p>يعرض أحدث ٣٠٠ حدث</p></div><button class="btn" id="rf">تحديث</button><button class="btn p" id="csv">تصدير CSV</button></div>
+  <div class="chips">${FILTERS.map(f => `<button class="ch ${S.filter===f[0]?"on":""}" data-f="${f[0]}">${f[1]}</button>`).join("")}</div><div class="cd">${body}</div>`;
+}
+function manage(){
+  const adm = S.role === "owner" ? (S.admins.length ? S.admins.map(a => `<div class="ad"><span class="av">${esc((a.email||"?")[0].toUpperCase())}</span><div style="flex:1;min-width:0"><div style="font-weight:700" dir="ltr">${esc(a.email||a.uid)}</div><div style="font-size:.75rem;color:var(--muted)" dir="ltr">${esc(a.uid)}</div></div><select class="fi" style="width:auto;flex:none" data-role="${esc(a.uid)}" ${a.uid===S.user.uid?"disabled":""}>${Object.entries(ROLES).map(([k,v]) => `<option value="${k}" ${a.role===k?"selected":""}>${v}</option>`).join("")}</select></div>`).join("") : `<div class="empty">لا يوجد مشرفون</div>`) : `<div class="empty">قائمة المشرفين يراها المالك فقط</div>`;
+  return `<div class="head"><div class="t"><h1>الإدارة والصلاحيات</h1><p>دورك الحالي: ${ROLES[S.role]||S.role}</p></div></div>
+  <div class="grid2e" style="margin-top:0"><div class="cd"><h3>المشرفون</h3><p class="s">من يدخل اللوحة وماذا يستطيع</p>${adm}
+    ${S.role==="owner" ? `<p style="margin:16px 0 6px;font-weight:700">إضافة مشرف</p><p class="note" style="margin:0 0 8px">أنشئ حسابه أولًا من Firebase ← Authentication ← Add user، ثم انسخ الـ UID هنا.</p>
+      <div class="row"><input class="fi" id="nu" dir="ltr" placeholder="UID"><input class="fi" id="ne" dir="ltr" placeholder="البريد"><select class="fi" id="nr" style="flex:none;width:auto"><option value="editor">محرر محتوى</option><option value="viewer">عرض فقط</option></select><button class="btn p" id="na">إضافة</button></div>` : ""}</div>
+  <div class="cd"><h3>الصلاحيات</h3><p class="s">ما يستطيع كل دور</p>
+    <div class="kv"><span><span class="tg" style="background:#14213d;color:#fff">مالك</span></span><span>كل شيء + إدارة المشرفين</span></div>
+    <div class="kv"><span><span class="tg" style="background:#d7f5e4;color:#0b3a22">محرر محتوى</span></span><span>الأوامر والحظر والإعلانات</span></div>
+    <div class="kv"><span><span class="tg" style="background:#ffe9bd;color:#4a3000">عرض فقط</span></span><span>مشاهدة الإحصاءات والسجل</span></div>
+    <h3 style="margin-top:18px">الأمان</h3><p class="note" style="margin-top:4px">القواعد في الخادم تمنع أي شخص غير مشرف من قراءة السجل، مهما فتح الصفحة. كل دخول وإجراء يُسجَّل باسم صاحبه.</p></div></div>`;
+}
+function controls(){
+  const st = S.settings, dis = canEdit() ? "" : "disabled";
+  const sw = (k, t, d) => `<div class="cm"><div class="x"><b>${t}</b><small>${d}</small></div><button class="sw ${st[k]?"on":""}" role="switch" aria-checked="${!!st[k]}" aria-label="${t}" data-sw="${k}" ${dis}></button></div>`;
+  return `<div class="head"><div class="t"><h1>الأوامر والتحكم</h1><p>كل إجراء يُسجَّل في سجل النشاط ${canEdit()?"":"· دورك لا يسمح بالتعديل"}</p></div></div>
+  <div class="grid2e" style="margin-top:0"><div class="cd"><h3>الموقع</h3><p class="s">تطبق خلال لحظات على كل الطلاب</p>
+    ${sw("maintenance","وضع الصيانة","يعرض للطلاب رسالة «نعود قريبًا»")}${sw("hideDiff","إخفاء أنشطة التمايز","تبقى الدروس متاحة")}
+    <p style="margin:16px 0 6px;font-weight:700">إعلان لكل الطلاب</p>
+    <div class="row"><input class="fi" id="an" maxlength="140" placeholder="اكتب رسالة تظهر أعلى الموقع" value="${esc(st.announcement||"")}" ${dis}><button class="btn o" id="ap" ${dis}>نشر</button><button class="btn" id="ac" ${dis}>إزالة</button></div></div>
+  <div class="cd"><h3>الطلاب</h3><p class="s">حظر جهاز مسيء أو تصدير البيانات</p>
+    <p style="margin:0 0 6px;font-weight:700">حظر بمعرّف الجهاز</p>
+    <div class="row"><input class="fi" id="bs" dir="ltr" placeholder="المعرّف من صفحة الطالب" ${dis}><button class="btn d" id="bb" ${dis}>حظر</button></div>
+    <p class="note">المحظورون الآن: ${ar(S.blocked.size)}. لإلغاء الحظر افتح الطالب من تبويب «الطلاب».</p>
+    <div class="row" style="margin-top:14px"><button class="btn" id="csv">تصدير السجل CSV</button></div></div></div>`;
+}
+
+/* ---------- الأحداث ---------- */
+async function setSetting(patch, detail){
+  try { await S.db.doc("settings/site").set({...patch, updated: ts(), by: S.user.email}, {merge:true}); Object.assign(S.settings, patch); await logAdmin("تعديل إعداد", detail); toast("تم الحفظ"); }
+  catch (e) { toast("تعذّر الحفظ: ليست لديك صلاحية"); }
+  render();
+}
+function bind(){
+  const on = (sel, fn) => document.querySelectorAll(sel).forEach(fn);
+  const rf = $("#rf"); if (rf) rf.onclick = async () => { rf.disabled = true; try { await loadAll(); toast("تم التحديث"); } catch(e){ toast("تعذّر التحديث"); } render(); };
+  const csv = $("#csv"); if (csv) csv.onclick = exportCsv;
+  on("[data-sid]", r => r.onclick = () => { S.sel = r.dataset.sid; render(); });
+  on("[data-f]", b => b.onclick = () => { S.filter = b.dataset.f; render(); });
+  on("[data-sw]", b => b.onclick = () => { const k = b.dataset.sw; setSetting({[k]: !S.settings[k]}, k + " = " + (!S.settings[k])); });
+  const ap = $("#ap"); if (ap) ap.onclick = () => { const v = $("#an").value.trim(); if (!v) return toast("اكتب الإعلان أولًا"); setSetting({announcement:v}, "نشر إعلان"); };
+  const ac = $("#ac"); if (ac) ac.onclick = () => setSetting({announcement:""}, "إزالة الإعلان");
+  const doBlock = async (sid, yes) => {
+    if (!sid) return toast("اكتب المعرّف");
+    try { const r = S.db.collection("blocked").doc(sid); yes ? await r.set({t:ts(), by:S.user.email}) : await r.delete(); yes ? S.blocked.add(sid) : S.blocked.delete(sid); await logAdmin(yes?"حظر جهاز":"إلغاء حظر", sid); toast(yes?"تم الحظر":"تم إلغاء الحظر"); }
+    catch (e) { toast("تعذّر التنفيذ: ليست لديك صلاحية"); }
+    render();
+  };
+  on("[data-block]", b => b.onclick = () => { if (confirm("حظر هذا الجهاز من استخدام الموقع؟")) doBlock(b.dataset.block, true); });
+  on("[data-unblock]", b => b.onclick = () => doBlock(b.dataset.unblock, false));
+  const bb = $("#bb"); if (bb) bb.onclick = () => { const v = $("#bs").value.trim(); if (v && confirm("تأكيد الحظر؟")) doBlock(v, true); };
+  on("[data-role]", s => s.onchange = async () => { try { await S.db.doc("admins/"+s.dataset.role).update({role:s.value}); const a = S.admins.find(x => x.uid === s.dataset.role); if (a) a.role = s.value; await logAdmin("تغيير دور", (a&&a.email||s.dataset.role)+" → "+s.value); toast("تم تغيير الدور"); } catch(e){ toast("تعذّر التنفيذ"); } });
+  const na = $("#na"); if (na) na.onclick = async () => {
+    const uid = $("#nu").value.trim(), email = $("#ne").value.trim(), role = $("#nr").value;
+    if (!uid || !email) return toast("أكمل UID والبريد");
+    try { await S.db.doc("admins/"+uid).set({email, role, t: ts()}); S.admins.push({uid,email,role}); await logAdmin("إضافة مشرف", email+" ("+role+")"); toast("تمت الإضافة"); render(); } catch(e){ toast("تعذّر التنفيذ"); }
+  };
+}
+function exportCsv(){
+  const head = ["time","type","visitor","path","lesson","level","score","total","country","timezone","device","browser"];
+  const q = v => '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"';
+  const rows = S.events.map(e => [e.d.toISOString(), e.type, e.sid, e.path, e.lesson, e.level, e.score, e.total, e.country, e.tz, e.dev, e.br].map(q).join(","));
+  const blob = new Blob(["﻿" + head.join(",") + "\n" + rows.join("\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "activity-log.csv"; a.click();
+  logAdmin("تصدير السجل", ar(S.events.length) + " حدث"); toast("تم التصدير");
+}
+boot();
+</script>
+</body>
+</html>
